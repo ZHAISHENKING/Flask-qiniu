@@ -41,7 +41,7 @@ def upload():
         up = UpFile()
         f = request.files["videofile"]
         filename = secure_filename(f.filename)
-        f.save(filename)
+        # f.save(filename)
         mime = filename.rsplit(".")[1]
 
         qiniu_url = up.upload_img(filename, mime)
