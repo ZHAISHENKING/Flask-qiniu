@@ -41,10 +41,9 @@ def upload():
         up = UpFile()
         f = request.files["videofile"]
         filename = secure_filename(f.filename)
-        # f.save(filename)
+        f.save(filename)
         mime = filename.rsplit(".")[1]
-        with open(f, "rb") as file:
-            qiniu_url = up.upload_img(file, mime)
+        qiniu_url = up.upload_img(filename, mime)
 
         if qiniu_url:
             up.notify("qiniu-fileup", "图片上传成功")
@@ -67,7 +66,7 @@ class UpFile(object):
         key = self.random_name() + "." + sfx
         q = qiniu.Auth(QINIU_AK, QINIU_SK)
         token = q.upload_token(QINIU_BUCKET, key, 3600)
-        ret, info = qiniu.put_data(token, key, fn)
+        ret, info = qiniu.put_file(token, key, fn)
         if (ret is not None) and ret['key'] == key and ret['hash'] == qiniu.etag(fn):
             return QINIU_DOMAIN + key
         else:
